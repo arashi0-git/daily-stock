@@ -73,3 +73,38 @@ Docker + Docker Compose
    python -m venv .venv && source .venv/bin/activate  # 任意
    pip install -e ".[dev]"
    ```
+
+3. **Git Hooks (Husky)**
+   `npm install` 実行時に `husky install` が走り、`pre-commit` で lint-staged + backend チェックが動きます。
+
+## 主要コマンド
+
+| コマンド | 説明 |
+| --- | --- |
+| `npm run dev --workspace frontend` | Vite 開発サーバ |
+| `npm run lint:frontend` | ESLint + boundaries チェック |
+| `npm run typecheck:frontend` | TypeScript 型チェック |
+| `npm run test:frontend` | Vitest (jsdom) |
+| `npm run deps:graph` | dependency-cruiser による依存監視 |
+| `npm run backend:ruff` | Ruff lint (`backend/scripts/run_ruff.sh`) |
+| `npm run backend:mypy` | mypy (strict) |
+| `npm run backend:pytest` | pytest + coverage |
+| `npm run backend:layers` | 独自 Python スクリプトで層違反を検出 |
+| `npm run backend:check` | 上記バックエンドコマンドをまとめて実行 |
+| `npm run validate` | フロント/バックの品質ゲートを一括実行 |
+
+## CI/CD
+
+- `.github/workflows/ci.yml` が Push / PR で自動実行
+  - **Frontend job**: `npm install` → ESLint → TypeScript → Vitest → dependency-cruiser
+  - **Backend job**: `pip install -e .[dev]` → Ruff → Ruff format --check → mypy → pytest → カスタム層チェック
+
+## アーキテクチャチェック
+
+- フロントエンド: `eslint-plugin-boundaries` と `dependency-cruiser` で Clean Architecture のレイヤー違反を検出
+- バックエンド: `backend/scripts/check_layers.py` で `api -> services -> repositories -> models` などの依存方向を静的解析
+
+## 今後の拡張ヒント
+
+- Azure Document Intelligence / GPT-4 呼び出しは `backend/app/services/inventory.py` にエントリーポイントを用意済み
+- PostgreSQL / SQLAlchemy への置き換えは `PurchaseRepository` を差し替えることで対応
