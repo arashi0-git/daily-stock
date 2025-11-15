@@ -7,7 +7,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src")
-    }
+    },
+    extensions: [".tsx", ".ts", ".jsx", ".js"]
   },
   test: {
     environment: "jsdom",
