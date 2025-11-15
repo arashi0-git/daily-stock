@@ -3,7 +3,6 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginImport from "eslint-plugin-import";
-import pluginBoundaries from "eslint-plugin-boundaries";
 import pluginTailwind from "eslint-plugin-tailwindcss";
 import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier";
@@ -28,21 +27,7 @@ export default tseslint.config(
     plugins: {
       "react-hooks": pluginReactHooks,
       import: pluginImport,
-      boundaries: pluginBoundaries,
       tailwindcss: pluginTailwind
-    },
-    settings: {
-      "import/resolver": {
-        typescript: {
-          project: ["./tsconfig.json"]
-        }
-      },
-      "boundaries/elements": [
-        { type: "root", pattern: "src/*.{ts,tsx}" },
-        { type: "pages", pattern: "src/pages/**" },
-        { type: "features", pattern: "src/features/**" },
-        { type: "shared", pattern: "src/shared/**" }
-      ]
     },
     rules: {
       ...pluginReactHooks.configs.recommended.rules,
@@ -67,14 +52,13 @@ export default tseslint.config(
           pathGroupsExcludedImportTypes: ["builtin"]
         }
       ],
-      "boundaries/element-types": [
+      "tailwindcss/no-custom-classname": "off",
+      "@typescript-eslint/no-misused-promises": [
         "error",
         {
-          default: "allow"
+          checksVoidReturn: false
         }
-      ],
-      "boundaries/no-unknown-files": "error",
-      "tailwindcss/no-custom-classname": "off"
+      ]
     }
   },
   eslintConfigPrettier

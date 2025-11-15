@@ -1,7 +1,8 @@
-import { Suspense } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
 import HomePage from "@/pages/home";
 import ItemsPage from "@/pages/items";
 import PurchasePage from "@/pages/purchase";

@@ -1,7 +1,10 @@
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useInventoryStore } from "./inventoryStore";
+import { useEffect } from "react";
+
 import { mockPredictInventory } from "@/features/items/infra/mockInventoryClient";
+
+import { useInventoryStore } from "./inventoryStore";
+
 
 export function useInventoryForecast() {
   const items = useInventoryStore((state) => state.items);

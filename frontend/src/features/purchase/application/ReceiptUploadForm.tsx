@@ -1,11 +1,14 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/shared/components/ui/button";
-import { useReceiptParser } from "./useReceiptParser";
+
 import { useInventoryStore } from "@/features/items/application/inventoryStore";
 import type { InventoryItem } from "@/features/items/domain/types";
+import { Button } from "@/shared/components/ui/button";
+
+import { useReceiptParser } from "./useReceiptParser";
+
 
 const formSchema = z.object({
   receipt: z.instanceof(File, { message: "レシート画像を選択してください" }),
@@ -30,29 +33,33 @@ export function ReceiptUploadForm({ onComplete }: ReceiptUploadFormProps) {
   const { mutateAsync: parseReceipt, isPending } = useReceiptParser();
   const upsertItems = useInventoryStore((state) => state.upsertItemsFromReceipt);
 
-  const onSubmit = form.handleSubmit(async (values) => {
-    const lines = await parseReceipt(values.receipt);
-    const purchaseDate = new Date(values.purchasedAt).toISOString();
+  const onSubmit = form.handleSubmit((values) => {
+    const executor = async () => {
+      const lines = await parseReceipt(values.receipt);
+      const purchaseDate = new Date(values.purchasedAt).toISOString();
 
-    const items: InventoryItem[] = lines
-      .filter((line) => line.isDailyNecessity)
-      .map((line) => ({
-        id: `${line.name}-${purchaseDate}`,
-        name: line.name,
-        category: "daily",
-        lastPurchasedAt: purchaseDate,
-        daysOfSupply: 30,
-        quantity: line.quantity,
-        unitPrice: line.unitPrice
-      }));
+      const items: InventoryItem[] = lines
+        .filter((line) => line.isDailyNecessity)
+        .map((line) => ({
+          id: `${line.name}-${purchaseDate}`,
+          name: line.name,
+          category: "daily",
+          lastPurchasedAt: purchaseDate,
+          daysOfSupply: 30,
+          quantity: line.quantity,
+          unitPrice: line.unitPrice
+        }));
 
-    upsertItems(items);
-    setMessage(`${items.length} 件の日用品をインポートしました`);
-    onComplete?.();
-    form.reset({
-      purchasedAt: new Date().toISOString().slice(0, 10),
-      receipt: undefined as unknown as File
-    });
+      upsertItems(items);
+      setMessage(`${items.length} 件の日用品をインポートしました`);
+      onComplete?.();
+      form.reset({
+        purchasedAt: new Date().toISOString().slice(0, 10),
+        receipt: undefined as unknown as File
+      });
+    };
+
+    void executor();
   });
 
   return (

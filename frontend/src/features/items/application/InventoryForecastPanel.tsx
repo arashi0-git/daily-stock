@@ -1,6 +1,7 @@
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
 import { formatDate } from "@/shared/utils/formatters";
+
 import { useInventoryStore } from "./inventoryStore";
 import { useInventoryForecast } from "./useInventoryForecast";
 
@@ -34,7 +35,12 @@ export function InventoryForecastPanel() {
           })}
         </div>
       )}
-      <Button variant="ghost" onClick={() => refetch()}>
+      <Button
+        variant="ghost"
+        onClick={() => {
+          void refetch();
+        }}
+      >
         再予測
       </Button>
     </Card>

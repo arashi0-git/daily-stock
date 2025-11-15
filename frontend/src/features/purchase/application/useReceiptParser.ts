@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+
 import { parseReceiptFile } from "@/features/purchase/infra/fileReceiptParser";
 
 export function useReceiptParser() {

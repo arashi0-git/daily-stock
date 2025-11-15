@@ -1,5 +1,6 @@
 import { Card } from "@/shared/components/ui/card";
 import { formatCurrency, formatDate } from "@/shared/utils/formatters";
+
 import { useInventoryStore } from "./inventoryStore";
 
 export function InventoryList() {

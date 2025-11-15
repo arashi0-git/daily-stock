@@ -1,4 +1,5 @@
 import { create } from "zustand";
+
 import type { InventoryItem, InventoryPrediction } from "@/features/items/domain/types";
 
 type InventoryState = {
