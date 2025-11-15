@@ -46,7 +46,10 @@ def validate_file(path: Path) -> list[str]:
     for module in iter_imports(path):
         if not module.startswith("app."):
             continue
-        target = module.split(".")[1]
+        parts = module.split(".")
+        if len(parts) < 2:
+            continue
+        target = parts[1]
         allowed = LAYER_RULES[layer]
         if target not in allowed:
             violations.append(
