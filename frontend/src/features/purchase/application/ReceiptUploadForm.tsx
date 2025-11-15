@@ -38,15 +38,15 @@ export function ReceiptUploadForm({ onComplete }: ReceiptUploadFormProps) {
       const lines = await parseReceipt(values.receipt);
       const purchaseDate = new Date(values.purchasedAt).toISOString();
 
-      const items: InventoryItem[] = lines
-        .filter((line) => line.isDailyNecessity)
-        .map((line) => ({
-          id: `${line.name}-${purchaseDate}`,
-          name: line.name,
-          category: "daily",
-          lastPurchasedAt: purchaseDate,
-          daysOfSupply: 30,
-          quantity: line.quantity,
+    const items: InventoryItem[] = lines
+      .filter((line) => line.isDailyNecessity)
+      .map((line, index) => ({
+        id: `${line.name}-${line.unitPrice}-${purchaseDate}-${index}`,
+        name: line.name,
+        category: "daily",
+        lastPurchasedAt: purchaseDate,
+        daysOfSupply: 30,
+        quantity: line.quantity,
           unitPrice: line.unitPrice
         }));
 
