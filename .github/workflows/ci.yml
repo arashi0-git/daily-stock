@@ -9,6 +9,7 @@ jobs:
   frontend:
     name: Frontend Quality Gates
     runs-on: ubuntu-latest
+    if: ${{ hashFiles('frontend/**') != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,6 +30,7 @@ jobs:
   backend:
     name: Backend Quality Gates
     runs-on: ubuntu-latest
+    if: ${{ hashFiles('backend/pyproject.toml') != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

@@ -1,5 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires -- config file
 const path = require("path");
+const { execSync } = require("child_process");
 
 const quote = (files) => files.map((file) => `"${file}"`).join(" ");
 
@@ -12,6 +12,15 @@ const toBackendPaths = (files) =>
   files
     .map((file) => path.relative("backend", file))
     .filter((file) => !file.startsWith(".."));
+
+const hasBackendSources = () => {
+  try {
+    execSync("git ls-files backend/app backend/tests --error-unmatch", { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 module.exports = {
   "frontend/**/*.{ts,tsx,js,jsx}": (files) => {
@@ -40,6 +49,9 @@ module.exports = {
     return [`cd frontend && npx vitest related ${quote(frontendFiles)} --runInBand`];
   },
   "backend/**/*.py": (files) => {
+    if (!hasBackendSources()) {
+      return [];
+    }
     const backendFiles = toBackendPaths(files);
     if (!backendFiles.length) {
       return [];
