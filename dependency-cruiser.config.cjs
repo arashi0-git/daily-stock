@@ -31,7 +31,7 @@ module.exports = {
     }
   ],
   options: {
-    baseDir: "frontend",
+    baseDir: ".",
     tsConfig: {
       fileName: "./frontend/tsconfig.json"
     },

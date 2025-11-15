@@ -41,6 +41,13 @@ module.exports = {
     }
     return [`cd frontend && npx prettier --write ${quote(frontendFiles)}`];
   },
+  "frontend/src/**/*.{ts,tsx}": (files) => {
+    const frontendFiles = toFrontendPaths(files);
+    if (!frontendFiles.length) {
+      return [];
+    }
+    return ["npm run deps:graph"];
+  },
   "frontend/**/*.{ts,tsx}": (files) => {
     const frontendFiles = toFrontendPaths(files);
     if (!frontendFiles.length) {
