@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "Running staged file checks..."
+npm run pre-commit

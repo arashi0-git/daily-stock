@@ -1,0 +1,30 @@
+{
+  "name": "daily-stock-monorepo",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "prepare": "husky install",
+    "lint-staged": "lint-staged --config lint-staged.config.cjs",
+    "lint:frontend": "npm run lint --workspace frontend",
+    "test:frontend": "npm run test --workspace frontend",
+    "typecheck:frontend": "npm run typecheck --workspace frontend",
+    "format:check": "npm run format:check --workspace frontend",
+    "format:write": "npm run format:write --workspace frontend",
+    "deps:graph": "dependency-cruiser --config dependency-cruiser.config.cjs \"frontend/src\"",
+    "backend:ruff": "backend/scripts/run_ruff.sh",
+    "backend:mypy": "backend/scripts/run_mypy.sh",
+    "backend:pytest": "backend/scripts/run_pytest.sh",
+    "backend:layers": "backend/scripts/run_architecture_check.sh",
+    "backend:check": "backend/scripts/run_backend_checks.sh",
+    "validate": "npm run lint:frontend && npm run typecheck:frontend && npm run test:frontend && npm run backend:check && npm run deps:graph",
+    "pre-commit": "npm run lint-staged"
+  },
+  "devDependencies": {
+    "dependency-cruiser": "^16.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.2.7"
+  }
+}
