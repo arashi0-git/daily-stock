@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  frontend:
+    name: Frontend Quality Gates
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('frontend/**') != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint:frontend
+      - name: Type check
+        run: npm run typecheck:frontend
+      - name: Unit tests
+        run: npm run test:frontend
+      - name: Architecture check
+        run: npm run deps:graph
+
+  backend:
+    name: Backend Quality Gates
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('backend/pyproject.toml') != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: backend/pyproject.toml
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Ruff
+        run: backend/scripts/run_ruff.sh
+      - name: Format check
+        run: backend/scripts/run_formatter.sh --check
+      - name: mypy
+        run: backend/scripts/run_mypy.sh
+      - name: pytest
+        run: backend/scripts/run_pytest.sh
+      - name: Layer check
+        run: backend/scripts/run_architecture_check.sh
