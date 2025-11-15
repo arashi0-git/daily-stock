@@ -5,11 +5,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import HomePage from "@/pages/home";
 import ItemsPage from "@/pages/items";
+import LoginPage from "@/pages/login";
 import PurchasePage from "@/pages/purchase";
 import { queryClient } from "@/shared/utils/queryClient";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
+  { path: "/login", element: <LoginPage /> },
   { path: "/items", element: <ItemsPage /> },
   { path: "/purchase", element: <PurchasePage /> }
 ]);

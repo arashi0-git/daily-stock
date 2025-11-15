@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires -- config file
 const path = require("path");
 const { execSync } = require("child_process");
 
