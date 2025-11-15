@@ -4,7 +4,11 @@ const API_BASE = "/api";
 
 async function handleResponse(response: Response, fallbackMessage: string) {
   if (response.ok) {
-    return (await response.json()) as AuthUser;
+    const { password: ignoredPassword, ...user } = (await response.json()) as AuthUser & {
+      password?: string;
+    };
+    void ignoredPassword;
+    return user;
   }
 
   try {

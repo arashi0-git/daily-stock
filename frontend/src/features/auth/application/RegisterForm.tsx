@@ -46,7 +46,9 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
   const onSubmit = form.handleSubmit(async (values) => {
     setFormError(undefined);
     try {
-      const user = await mutateAsync(values);
+      const { confirmPassword: ignoredConfirmPassword, ...payload } = values;
+      void ignoredConfirmPassword;
+      const user = await mutateAsync(payload);
       onSuccess?.(user);
     } catch (error) {
       setFormError(error instanceof Error ? error.message : "ユーザー登録中にエラーが発生しました");
