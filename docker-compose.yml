@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+        POSTGRES_DB: ${POSTGRES_DB:-daily_stock}
+        POSTGRES_USER: ${POSTGRES_USER:-postgres}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DAILY_STOCK_DATABASE_URL: ${DAILY_STOCK_DATABASE_URL}
+      DAILY_STOCK_JWT_SECRET_KEY: ${DAILY_STOCK_JWT_SECRET_KEY}
+      DAILY_STOCK_CORS_ORIGINS: http://localhost:5173
+      DAILY_STOCK_AUTH_COOKIE_SECURE: "false"
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:8000/api
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
