@@ -14,7 +14,10 @@ backend/.pytest_cache
 **/*.pyc
 **/*.pyo
 **/*.pyd
-coverage
+
+# Test coverage
+coverage/
+.coverage
 *.log
 .env
 .env.*
