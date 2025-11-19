@@ -74,8 +74,38 @@ Docker + Docker Compose
    pip install -e ".[dev]"
    ```
 
+   `.env`で以下のように環境変数を設定してください（例）:
+
+   ```
+   DAILY_STOCK_DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/daily_stock
+   DAILY_STOCK_JWT_SECRET_KEY=please-change-me
+   DAILY_STOCK_CORS_ORIGINS=http://localhost:5173
+   DAILY_STOCK_AUTH_COOKIE_SECURE=false
+   ```
+
+   FastAPI は `uvicorn app.main:app --reload` などで起動できます。  
+   フロントエンドからは `VITE_API_BASE_URL=http://localhost:8000/api` を設定することで CORS + Cookie（HTTP-only）付きで API を呼び出せます。
+
 3. **Git Hooks (Husky)**
    `npm install` 実行時に `husky install` が走り、`pre-commit` で lint-staged + backend チェックが動きます。
+
+## Docker 開発環境
+
+ローカルで Node/Python を直接入れずに動作させたい場合は Docker Compose を利用できます。
+
+1. ルートで `docker compose build` を実行し、イメージを作成します。
+2. `docker compose up -d` でバックエンド(FastAPI)、フロントエンド(Vite ビルド品を nginx で配信)、PostgreSQL が起動します。
+3. ブラウザで `http://localhost:5173` にアクセスするとフロントエンド、`http://localhost:8000/docs` にアクセスすると FastAPI のドキュメントが確認できます。
+
+デフォルト設定:
+
+- PostgreSQL: `postgres:postgres@localhost:5432/daily_stock`
+- バックエンド: http://localhost:8000
+- フロントエンド: http://localhost:5173
+- `VITE_API_BASE_URL` は build 引数で上書き可能 (`docker compose build --build-arg VITE_API_BASE_URL=... frontend`)
+
+Azure Document Intelligence など追加の環境変数が必要な場合は `docker-compose.yml` の `backend` サービスに `environment` を追記してください。  
+開発中にコンテナを停止するには `docker compose down` を実行します。
 
 ## 主要コマンド
 
