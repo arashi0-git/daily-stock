@@ -23,25 +23,45 @@ class OCRService:
         poller = self.client.begin_analyze_document("prebuilt-receipt", document=file_content)
         result = poller.result()
 
-        items = []
+        items: list[dict[str, Any]] = []
+
+        # Type guard: check if documents exist and is not None
+        if not result.documents:
+            return [{"name": "不明な商品", "quantity": 1, "unitPrice": 0, "isDailyNecessity": True}]
+
         for receipt in result.documents:
-            if "Items" in receipt.fields:
-                for idx, item in enumerate(receipt.fields["Items"].value):
-                    item_dict = item.value
-                    name = item_dict.get("Description")
-                    quantity = item_dict.get("Quantity")
-                    price = item_dict.get("TotalPrice")
+            # Type guard: check if fields exist and is not None
+            if not receipt.fields or "Items" not in receipt.fields:
+                continue
 
-                    name_val = name.value if name else f"商品-{idx + 1}"
-                    quantity_val = quantity.value if quantity else 1
-                    price_val = price.value if price else 0
+            items_field = receipt.fields.get("Items")
+            if not items_field or not items_field.value:
+                continue
 
-                    items.append({
-                        "name": name_val,
-                        "quantity": int(quantity_val) if quantity_val else 1,
-                        "unitPrice": int(price_val) if price_val else 0,
-                        "isDailyNecessity": True,  # Default to True as in mock
-                    })
+            # Type guard: ensure value is a list
+            items_value = items_field.value
+            if not isinstance(items_value, list):
+                continue
+
+            for idx, item in enumerate(items_value):
+                if not hasattr(item, "value") or not isinstance(item.value, dict):
+                    continue
+
+                item_dict: dict[str, Any] = item.value
+                name = item_dict.get("Description")
+                quantity = item_dict.get("Quantity")
+                price = item_dict.get("TotalPrice")
+
+                name_val = name.value if name and hasattr(name, "value") else f"商品-{idx + 1}"
+                quantity_val = quantity.value if quantity and hasattr(quantity, "value") else 1
+                price_val = price.value if price and hasattr(price, "value") else 0
+
+                items.append({
+                    "name": name_val,
+                    "quantity": int(quantity_val) if quantity_val else 1,
+                    "unitPrice": int(price_val) if price_val else 0,
+                    "isDailyNecessity": True,  # Default to True as in mock
+                })
 
         if not items:
             # Fallback if no items found

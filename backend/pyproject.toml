@@ -64,6 +64,10 @@ packages = ["app"]
 plugins = []
 ignore_missing_imports = false
 
+[[tool.mypy.overrides]]
+module = ["jose.*", "passlib.*"]
+ignore_missing_imports = true
+
 [tool.poetry]
 package-mode = false
 
