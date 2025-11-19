@@ -1,6 +1,6 @@
 from typing import Any
 
-from azure.ai.formrecognizer import DocumentAnalysisClient  # type: ignore[import-untyped]
+from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 
 from app.core.config import settings
