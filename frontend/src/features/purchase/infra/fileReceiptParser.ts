@@ -1,17 +1,6 @@
 import type { ParsedReceiptLine } from "@/features/purchase/domain/types";
 
-const MOCK_IMAGE_ITEMS: ParsedReceiptLine[] = [
-  { name: "トイレットペーパー", quantity: 1, unitPrice: 498, isDailyNecessity: true },
-  { name: "歯ブラシ", quantity: 2, unitPrice: 320, isDailyNecessity: true },
-  { name: "ハンドソープ詰替", quantity: 1, unitPrice: 648, isDailyNecessity: true },
-  { name: "ラップ（30cm）", quantity: 1, unitPrice: 278, isDailyNecessity: true },
-  { name: "キッチンペーパー", quantity: 1, unitPrice: 398, isDailyNecessity: true }
-];
 
-const pickMockItems = (seed: number) => {
-  const count = Math.max(1, Math.min(MOCK_IMAGE_ITEMS.length, (seed % 3) + 2));
-  return MOCK_IMAGE_ITEMS.slice(0, count);
-};
 
 const parseTextReceipt = async (file: File): Promise<ParsedReceiptLine[]> => {
   const content = await file.text();
@@ -44,13 +33,20 @@ const parseTextReceipt = async (file: File): Promise<ParsedReceiptLine[]> => {
 };
 
 const parseImageReceipt = async (file: File): Promise<ParsedReceiptLine[]> => {
-  const buffer = await file.arrayBuffer();
-  let checksum = 0;
-  const view = new Uint8Array(buffer);
-  for (let index = 0; index < view.length; index += Math.ceil(view.length / 32) || 1) {
-    checksum = (checksum + view[index]) % 1000;
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/api/ocr/receipt`, {
+    method: "POST",
+    body: formData
+  });
+
+  if (!response.ok) {
+    throw new Error("レシートの読み取りに失敗しました");
   }
-  return pickMockItems(checksum);
+
+  const data = await response.json() as ParsedReceiptLine[];
+  return data;
 };
 
 export async function parseReceiptFile(file: File): Promise<ParsedReceiptLine[]> {

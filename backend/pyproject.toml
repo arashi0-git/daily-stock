@@ -2,7 +2,7 @@
 name = "daily-stock-backend"
 version = "0.1.0"
 description = "FastAPI backend for the daily-stock platform"
-requires-python = ">=3.11,<4.0"
+requires-python = ">=3.10,<4.0"
 dependencies = [
   "fastapi>=0.110.0",
   "uvicorn[standard]>=0.29.0",
@@ -15,7 +15,8 @@ dependencies = [
   "greenlet>=3.0.3",
   "passlib[bcrypt]>=1.7.4",
   "python-jose[cryptography]>=3.3.0",
-  "email-validator>=2.1.1"
+  "email-validator>=2.1.1",
+  "azure-ai-formrecognizer>=3.3.0"
 ]
 
 [project.optional-dependencies]
@@ -32,11 +33,13 @@ requires = ["setuptools>=69.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py310"
 line-length = 100
+src = ["app"]
+
+[tool.ruff.lint]
 select = ["E", "F", "I", "UP", "RUF"]
 ignore = ["E203"]
-src = ["app"]
 
 [tool.ruff.format]
 preview = true
@@ -55,7 +58,7 @@ branch = true
 show_missing = true
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.10"
 strict = true
 packages = ["app"]
 plugins = []

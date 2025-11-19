@@ -8,7 +8,12 @@ backend/.venv
 backend/.mypy_cache
 backend/.ruff_cache
 backend/.pytest_cache
-backend/__pycache__
+
+# Python bytecode
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
 coverage
 *.log
 .env
