@@ -1,14 +1,15 @@
-from typing import Annotated, Any
+from typing import Annotated
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
+from app.schemas.receipt import ReceiptItem
 from app.services.ocr_service import OCRService
 
 router = APIRouter()
 
 
-@router.post("/receipt")
-async def parse_receipt(file: Annotated[UploadFile, File()]) -> list[dict[str, Any]]:
+@router.post("/receipt", response_model=list[ReceiptItem])
+async def parse_receipt(file: Annotated[UploadFile, File()]) -> list[ReceiptItem]:
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Invalid file type. Only images are supported.")
 

@@ -4,6 +4,7 @@ from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 
 from app.core.config import settings
+from app.schemas.receipt import ReceiptItem
 
 
 class OCRService:
@@ -19,15 +20,14 @@ class OCRService:
             credential=AzureKeyCredential(settings.AZURE_DOCUMENT_INTELLIGENCE_KEY),
         )
 
-    def parse_receipt(self, file_content: bytes) -> list[dict[str, Any]]:
+    def parse_receipt(self, file_content: bytes) -> list[ReceiptItem]:
         poller = self.client.begin_analyze_document("prebuilt-receipt", document=file_content)
         result = poller.result()
 
-        items: list[dict[str, Any]] = []
-
-        # Type guard: check if documents exist and is not None
-        if not result.documents:
-            return [{"name": "不明な商品", "quantity": 1, "unitPrice": 0, "isDailyNecessity": True}]
+        items = []
+        # The original code had a check for `if not result.documents:`.
+        # The new logic implicitly handles this: if `result.documents` is empty,
+        # the loop won't run, and `items` will remain empty, triggering the final fallback.
 
         for receipt in result.documents:
             # Type guard: check if fields exist and is not None
@@ -56,15 +56,17 @@ class OCRService:
                 quantity_val = quantity.value if quantity and hasattr(quantity, "value") else 1
                 price_val = price.value if price and hasattr(price, "value") else 0
 
-                items.append({
-                    "name": name_val,
-                    "quantity": int(quantity_val) if quantity_val else 1,
-                    "unitPrice": int(price_val) if price_val else 0,
-                    "isDailyNecessity": True,  # Default to True as in mock
-                })
+                items.append(
+                    ReceiptItem(
+                        name=str(name_val),
+                        quantity=int(quantity_val) if quantity_val else 1,
+                        unitPrice=int(price_val) if price_val else 0,
+                        isDailyNecessity=True,
+                    )
+                )
 
         if not items:
             # Fallback if no items found
-            return [{"name": "不明な商品", "quantity": 1, "unitPrice": 0, "isDailyNecessity": True}]
+            return [ReceiptItem(name="不明な商品", quantity=1, unitPrice=0, isDailyNecessity=True)]
 
         return items
