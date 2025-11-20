@@ -24,11 +24,10 @@ class OCRService:
         poller = self.client.begin_analyze_document("prebuilt-receipt", document=file_content)
         result = poller.result()
 
-        items = []
-        # The original code had a check for `if not result.documents:`.
-        # The new logic implicitly handles this: if `result.documents` is empty,
-        # the loop won't run, and `items` will remain empty, triggering the final fallback.
+        if not result.documents:
+            return [ReceiptItem(name="不明な商品", quantity=1, unitPrice=0, isDailyNecessity=True)]
 
+        items = []
         for receipt in result.documents:
             # Type guard: check if fields exist and is not None
             if not receipt.fields or "Items" not in receipt.fields:
