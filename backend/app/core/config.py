@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     # SECURITY
     JWT_SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
-    AUTH_COOKIE_SECURE: bool = False
+    AUTH_COOKIE_SECURE: bool = True
 
     # Azure Document Intelligence
     # Azure Document Intelligence
