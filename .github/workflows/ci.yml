@@ -82,6 +82,11 @@ jobs:
         run: backend/scripts/run_mypy.sh
       - name: pytest
         if: steps.backend_check.outputs.present == 'true'
+        env:
+          DAILY_STOCK_JWT_SECRET_KEY: "test_secret_key"
+          DAILY_STOCK_POSTGRES_USER: "postgres"
+          DAILY_STOCK_POSTGRES_PASSWORD: "postgres"
+          DAILY_STOCK_POSTGRES_DB: "daily_stock_test"
         run: backend/scripts/run_pytest.sh
       - name: Layer check
         if: steps.backend_check.outputs.present == 'true'

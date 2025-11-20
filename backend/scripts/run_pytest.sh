@@ -11,7 +11,7 @@ if ! [ -d "tests" ] && [ ${#ARGS[@]} -eq 0 ]; then
 fi
 
 if command -v uv >/dev/null 2>&1; then
-  uv run pytest "${ARGS[@]}"
+  uv run pytest "${ARGS[@]:-}"
 else
-  python -m pytest "${ARGS[@]}"
+  python -m pytest "${ARGS[@]:-}"
 fi
