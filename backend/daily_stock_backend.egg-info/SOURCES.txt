@@ -1,6 +1,0 @@
-pyproject.toml
-daily_stock_backend.egg-info/PKG-INFO
-daily_stock_backend.egg-info/SOURCES.txt
-daily_stock_backend.egg-info/dependency_links.txt
-daily_stock_backend.egg-info/requires.txt
-daily_stock_backend.egg-info/top_level.txt
